@@ -56,14 +56,14 @@ namespace TypeScriptDefinitionParser.Parsers
                 .IfDefined(() => identifiedInterface = true)
                 .ThenOptionally(Whitespace)
                 .Then(Identifier, value => interfaceName = value)
-                // TODO .If('<', GenericTypeParamList(value => genericTypeParams = value))
+                .ThenOptionally(Whitespace)
+                .If(Match('<')).Then(GenericTypeParamList, value => genericTypeParams = value)
                 .ThenOptionally(Whitespace)
                 .Then(Match('{'))
                 .ThenOptionally(Whitespace)
                 .ThenOptionally(InterfaceProperties, value => properties = value)
                 .ThenOptionally(Whitespace)
                 .Then(Match('}'));
-                ;
             if (!readerAfterInterfaceContent.IsDefined)
             {
                 if (identifiedInterface)
