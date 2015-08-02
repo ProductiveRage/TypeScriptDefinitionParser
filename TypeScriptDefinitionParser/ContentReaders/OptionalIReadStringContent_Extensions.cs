@@ -50,5 +50,38 @@ namespace TypeScriptDefinitionParser.ContentReaders
                 report();
             return reader;
         }
+
+        public static ConditionalParser<T> If<T>(this Optional<IReadStringContent> reader, Parser<T> parser)
+        {
+            if (parser == null)
+                throw new ArgumentNullException(nameof(parser));
+
+            return new ConditionalParser<T>(reader, parser);
+        }
+
+        public sealed class ConditionalParser<TCondition>
+        {
+            private readonly Optional<IReadStringContent> _reader;
+            private readonly Parser<TCondition> _condition;
+            public ConditionalParser(Optional<IReadStringContent> reader, Parser<TCondition> condition)
+            {
+                if (condition == null)
+                    throw new ArgumentNullException(nameof(condition));
+
+                _reader = reader;
+                _condition = condition;
+            }
+
+            public Optional<IReadStringContent> Then<T>(Parser<T> parser, Action<T> report)
+            {
+                if (parser == null)
+                    throw new ArgumentNullException(nameof(parser));
+
+                if (!_reader.IsDefined || !_reader.Then(_condition).IsDefined)
+                    return _reader;
+
+                return _reader.Then(parser, report);
+            }
+        }
     }
 }
