@@ -47,7 +47,7 @@ namespace TypeScriptDefinitionParser.Parsers
 
             var identifiedInterface = false;
             var interfaceName = Optional<IdentifierDetails>.Missing;
-            var genericTypeParams = Optional<ImmutableList<IType>>.Missing;
+            var genericTypeParams = Optional<ImmutableList<TypeParameterDetails>>.Missing;
             var properties = ImmutableList<PropertyDetails>.Empty;
             var readerAfterInterfaceContent = reader
                 .StartMatching()
@@ -59,6 +59,7 @@ namespace TypeScriptDefinitionParser.Parsers
                 .ThenOptionally(Whitespace)
                 .If(Match('<')).Then(GenericTypeParamList, value => genericTypeParams = value)
                 .ThenOptionally(Whitespace)
+                // TODO: Check for interfaces that this one implements (eg. "interface Square extends Shape, PenStroke")
                 .Then(Match('{'))
                 .ThenOptionally(Whitespace)
                 .ThenOptionally(InterfaceProperties, value => properties = value)
@@ -76,7 +77,7 @@ namespace TypeScriptDefinitionParser.Parsers
             return MatchResult.New(
                 new InterfaceDetails(
                     interfaceName.Value,
-                    genericTypeParams.GetValueOrDefault(ImmutableList<IType>.Empty),
+                    genericTypeParams.GetValueOrDefault(ImmutableList<TypeParameterDetails>.Empty),
                     properties,
                     new SourceRangeDetails(reader.Index, readerAfterInterfaceContent.Value.Index - reader.Index)
                 ),
@@ -84,14 +85,47 @@ namespace TypeScriptDefinitionParser.Parsers
             );
         }
 
-        public static Optional<MatchResult<ImmutableList<IType>>> GenericTypeParamList(IReadStringContent reader)
+        public static Optional<MatchResult<ImmutableList<TypeParameterDetails>>> GenericTypeParamList(IReadStringContent reader)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
 
-            // TODO: Check for opening '<' and closing '>'
-            // TODO: Needs to support types with optional "extends" constraints
-            throw new NotImplementedException(); // TODO
+            var readerAtTypeParameterDefinition = reader.StartMatching().Then(Match('<'));
+            if (!readerAtTypeParameterDefinition.IsDefined)
+                throw new ArgumentException("must be positioned at the start of a generic type's type parameters (first character must be a '<')", nameof(reader));
+
+            reader = reader.Next();
+            var genericTypeParameters = ImmutableList<TypeParameterDetails>.Empty;
+            while (true)
+            {
+                var readerAfterImminentClosingBrace = readerAtTypeParameterDefinition.ThenOptionally(Whitespace).Then(Match('>'));
+                if (readerAfterImminentClosingBrace.IsDefined)
+                {
+                    if (!genericTypeParameters.Any())
+                        throw new ArgumentException("invalid generic type parameter list - zero values", nameof(reader));
+                    reader = readerAfterImminentClosingBrace.Value;
+                    break;
+                }
+                if (genericTypeParameters.Any())
+                {
+                    var readerAfterTypeParameterSeparator = readerAtTypeParameterDefinition.ThenOptionally(Whitespace).Then(Match(','));
+                    if (readerAfterTypeParameterSeparator.IsDefined)
+                        readerAtTypeParameterDefinition = readerAfterTypeParameterSeparator;
+                }
+
+                var identifier = Optional<IdentifierDetails>.Missing;
+                var typeConstraint = Optional<IdentifierDetails>.Missing; // TODO: Get this
+                var readerAfterValue = readerAtTypeParameterDefinition
+                    .ThenOptionally(Whitespace)
+                    .Then(Identifier, value => identifier = value);
+                if (!readerAfterValue.IsDefined)
+                    break;
+                genericTypeParameters = genericTypeParameters.Add(new TypeParameterDetails(identifier.Value, typeConstraint));
+                readerAtTypeParameterDefinition = readerAfterValue;
+            }
+            if (!genericTypeParameters.Any())
+                return Optional<MatchResult<ImmutableList<TypeParameterDetails>>>.Missing;
+            return MatchResult.New(genericTypeParameters, reader);
         }
 
         private static Optional<MatchResult<ImmutableList<PropertyDetails>>> InterfaceProperties(IReadStringContent reader)
@@ -112,8 +146,8 @@ namespace TypeScriptDefinitionParser.Parsers
                     .Then(Match(':'))
                     .ThenOptionally(Whitespace)
                     .Then(TypeDescription, value => typeDescription = value)
-                    .Then(Match(';'))
-                    .ThenOptionally(Whitespace);
+                    .ThenOptionally(Whitespace)
+                    .Then(Match(';'));
                 if (!readerAfterValue.IsDefined)
                     break;
 

@@ -6,7 +6,7 @@ namespace TypeScriptDefinitionParser.Types
 {
     public sealed class InterfaceDetails : IType
     {
-        public InterfaceDetails(IdentifierDetails name, ImmutableList<IType> genericTypeParams, ImmutableList<PropertyDetails> contents, SourceRangeDetails source)
+        public InterfaceDetails(IdentifierDetails name, ImmutableList<TypeParameterDetails> genericTypeParams, ImmutableList<PropertyDetails> contents, SourceRangeDetails source)
         {
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
@@ -28,7 +28,7 @@ namespace TypeScriptDefinitionParser.Types
         }
 
         public IdentifierDetails Name { get; }
-        public ImmutableList<IType> GenericTypeParams { get; }
+        public ImmutableList<TypeParameterDetails> GenericTypeParams { get; }
         public ImmutableList<PropertyDetails> Contents { get; }
         public SourceRangeDetails SourceRange { get; }
     }
