@@ -6,10 +6,10 @@ namespace TypeScriptDefinitionParser.Types
 {
     public sealed class IdentifierDetails : IType
     {
-        private static readonly ImmutableHashSet<char> DisallowedCharacters = 
-            Enumerable.Range(0, char.MaxValue)
+        public static ImmutableHashSet<char> DisallowedCharacters { get; }
+            = Enumerable.Range(0, char.MaxValue)
                 .Select(c => (char)c)
-                .Where(c => char.IsWhiteSpace(c)) // TODO: Any more? (Suspect the "valid TypeScript identifier" guarantee is not properly fulfilled with only this check!)
+                .Where(c => !char.IsLetterOrDigit(c) && (c != '$') && (c != '_'))
                 .ToImmutableHashSet();
 
         public IdentifierDetails(string value, SourceRangeDetails sourceRange)
