@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace TypeScriptDefinitionParser.Types
 {
     public sealed class IdentifierDetails : IType
     {
-        private static readonly HashSet<char> DisallowedCharacters = new HashSet<char>(
+        private static readonly ImmutableHashSet<char> DisallowedCharacters = 
             Enumerable.Range(0, char.MaxValue)
                 .Select(c => (char)c)
                 .Where(c => char.IsWhiteSpace(c)) // TODO: Any more? (Suspect the "valid TypeScript identifier" guarantee is not properly fulfilled with only this check!)
-                .ToList()
-                .AsReadOnly()
-        );
+                .ToImmutableHashSet();
 
         public IdentifierDetails(string value, SourceRangeDetails sourceRange)
         {
@@ -25,7 +23,7 @@ namespace TypeScriptDefinitionParser.Types
                 .Select((c, i) => new { Index = i, Character = c })
                 .FirstOrDefault(indexedCharacter => DisallowedCharacters.Contains(indexedCharacter.Character));
             if (firstDisallowedCharacter != null)
-                throw new ArgumentException($"Contains invalid character at index {firstDisallowedCharacter.Index}: '{firstDisallowedCharacter.Character}'" , nameof(value));
+                throw new ArgumentException($"Contains invalid character at index {firstDisallowedCharacter.Index}: '{firstDisallowedCharacter.Character}'", nameof(value));
 
             Value = value;
             SourceRange = sourceRange;
