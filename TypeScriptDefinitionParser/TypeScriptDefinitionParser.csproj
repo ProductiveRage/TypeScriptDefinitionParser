@@ -53,6 +53,7 @@
     <Compile Include="ContentReaders\StringNavigator.cs" />
     <Compile Include="ContentReaders\IReadStringContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Types\TypeParameterDetails.cs" />
     <Compile Include="Types\PropertyDetails.cs" />
     <Compile Include="Types\TypeDescriptionDetails.cs" />
     <Compile Include="Types\InterfaceDetails.cs" />
