@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Linq;
 using TypeScriptDefinitionParser.ContentReaders;
 using TypeScriptDefinitionParser.Types;
-using TypeScriptDefinitionParser.TypeScriptDefinitionParser;
 using static TypeScriptDefinitionParser.Parsers.CommonTerminators;
 using static TypeScriptDefinitionParser.Parsers.StandardParsers;
 
@@ -47,8 +47,8 @@ namespace TypeScriptDefinitionParser.Parsers
 
             var identifiedInterface = false;
             var interfaceName = Optional<IdentifierDetails>.Missing;
-            var genericTypeParams = Optional<NonNullImmutableSet<IType>>.Missing;
-            var properties = NonNullImmutableSet<PropertyDetails>.Empty;
+            var genericTypeParams = Optional<ImmutableList<IType>>.Missing;
+            var properties = ImmutableList<PropertyDetails>.Empty;
             var readerAfterInterfaceContent = reader
                 .StartMatching()
                 .Then(Match("interface"))
@@ -76,7 +76,7 @@ namespace TypeScriptDefinitionParser.Parsers
             return MatchResult.New(
                 new InterfaceDetails(
                     interfaceName.Value,
-                    genericTypeParams.GetValueOrDefault(NonNullImmutableSet<IType>.Empty),
+                    genericTypeParams.GetValueOrDefault(ImmutableList<IType>.Empty),
                     properties,
                     new SourceRangeDetails(reader.Index, readerAfterInterfaceContent.Value.Index - reader.Index)
                 ),
@@ -84,7 +84,7 @@ namespace TypeScriptDefinitionParser.Parsers
             );
         }
 
-        public static Optional<MatchResult<NonNullImmutableSet<IType>>> GenericTypeParamList(IReadStringContent reader)
+        public static Optional<MatchResult<ImmutableList<IType>>> GenericTypeParamList(IReadStringContent reader)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -94,12 +94,12 @@ namespace TypeScriptDefinitionParser.Parsers
             throw new NotImplementedException(); // TODO
         }
 
-        private static Optional<MatchResult<NonNullImmutableSet<PropertyDetails>>> InterfaceProperties(IReadStringContent reader)
+        private static Optional<MatchResult<ImmutableList<PropertyDetails>>> InterfaceProperties(IReadStringContent reader)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
 
-            var contents = NonNullImmutableSet<PropertyDetails>.Empty;
+            var contents = ImmutableList<PropertyDetails>.Empty;
             while (true)
             {
                 var identifier = Optional<IdentifierDetails>.Missing;
@@ -121,7 +121,7 @@ namespace TypeScriptDefinitionParser.Parsers
                 reader = readerAfterValue.Value;
             }
             if (!contents.Any())
-                return Optional<MatchResult<NonNullImmutableSet<PropertyDetails>>>.Missing;
+                return Optional<MatchResult<ImmutableList<PropertyDetails>>>.Missing;
             return MatchResult.New(contents, reader);
         }
 

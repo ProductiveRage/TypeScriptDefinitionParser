@@ -39,7 +39,6 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NonNullImmutableSet.cs" />
     <Compile Include="Parsers\CommonTerminators.cs" />
     <Compile Include="ContentReaders\OptionalIReadStringContent_Extensions.cs" />
     <Compile Include="ContentReaders\IReadStringContent_Extensions.cs" />
