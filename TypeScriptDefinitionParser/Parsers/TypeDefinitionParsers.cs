@@ -47,7 +47,7 @@ namespace TypeScriptDefinitionParser.Parsers
 
             var identifiedInterface = false;
             var interfaceName = Optional<IdentifierDetails>.Missing;
-            var genericTypeParams = Optional<ImmutableList<TypeParameterDetails>>.Missing;
+            var genericTypeParameters = Optional<ImmutableList<TypeParameterDetails>>.Missing;
             var properties = ImmutableList<PropertyDetails>.Empty;
             var readerAfterInterfaceContent = reader
                 .StartMatching()
@@ -57,7 +57,7 @@ namespace TypeScriptDefinitionParser.Parsers
                 .ThenOptionally(Whitespace)
                 .Then(Identifier, value => interfaceName = value)
                 .ThenOptionally(Whitespace)
-                .If(Match('<')).Then(GenericTypeParamList, value => genericTypeParams = value)
+                .If(Match('<')).Then(GenericTypeParameters, value => genericTypeParameters = value)
                 .ThenOptionally(Whitespace)
                 // TODO: Check for interfaces that this one implements (eg. "interface Square extends Shape, PenStroke")
                 .Then(Match('{'))
@@ -71,13 +71,13 @@ namespace TypeScriptDefinitionParser.Parsers
                     throw new ArgumentException($"Invalid interface content starting at {reader.Index}");
                 return Optional<MatchResult<InterfaceDetails>>.Missing;
             }
-            if (genericTypeParams.IsDefined && !genericTypeParams.Value.Any())
+            if (genericTypeParameters.IsDefined && !genericTypeParameters.Value.Any())
                 throw new ArgumentException($"Invalid interface content starting at {reader.Index} - has generic type param opening bracket but zero type params present");
 
             return MatchResult.New(
                 new InterfaceDetails(
                     interfaceName.Value,
-                    genericTypeParams.GetValueOrDefault(ImmutableList<TypeParameterDetails>.Empty),
+                    genericTypeParameters.GetValueOrDefault(ImmutableList<TypeParameterDetails>.Empty),
                     properties,
                     new SourceRangeDetails(reader.Index, readerAfterInterfaceContent.Value.Index - reader.Index)
                 ),
@@ -85,7 +85,7 @@ namespace TypeScriptDefinitionParser.Parsers
             );
         }
 
-        public static Optional<MatchResult<ImmutableList<TypeParameterDetails>>> GenericTypeParamList(IReadStringContent reader)
+        public static Optional<MatchResult<ImmutableList<TypeParameterDetails>>> GenericTypeParameters(IReadStringContent reader)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
