@@ -18,9 +18,6 @@ namespace TypeScriptDefinitionParser.Types
         /// <summary>This will always be greater than zero</summary>
         public uint Length { get; }
 
-        public override string ToString()
-        {
-            return $"{{ {StartIndex}, {Length} }}";
-        }
+        public override string ToString() => $"{{ {StartIndex}, {Length} }}";
     }
 }
