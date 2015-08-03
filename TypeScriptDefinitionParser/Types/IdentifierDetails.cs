@@ -34,6 +34,6 @@ namespace TypeScriptDefinitionParser.Types
 
         public SourceRangeDetails SourceRange { get; }
 
-        public override string ToString() => $"\"{Value}\"";
+        public override string ToString() => $"{Value}";
     }
 }

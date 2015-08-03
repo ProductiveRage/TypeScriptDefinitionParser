@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace TypeScriptDefinitionParser.Types
 {
-    [DebuggerDisplay("{DebuggerDisplay, nq}")]
     public sealed class SourceRangeDetails
     {
         public SourceRangeDetails(uint startIndex, uint length)
@@ -20,6 +18,9 @@ namespace TypeScriptDefinitionParser.Types
         /// <summary>This will always be greater than zero</summary>
         public uint Length { get; }
 
-        private string DebuggerDisplay => $"{{ {StartIndex}, {Length} }}";
+        public override string ToString()
+        {
+            return $"{{ {StartIndex}, {Length} }}";
+        }
     }
 }
