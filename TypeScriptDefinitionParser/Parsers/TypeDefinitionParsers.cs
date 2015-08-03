@@ -15,7 +15,7 @@ namespace TypeScriptDefinitionParser.Parsers
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
 
-            var result = reader.MatchAny(IdentifierDetails.DisallowedCharacters);
+            var result = reader.MatchAnythingUntil(IdentifierDetails.DisallowedCharacters);
             if (!result.IsDefined)
                 return null;
 
@@ -30,7 +30,7 @@ namespace TypeScriptDefinitionParser.Parsers
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
 
-            var result = reader.MatchAny(UntilWhiteSpaceOrPunctuation);
+            var result = reader.MatchAnythingUntil(UntilWhiteSpaceOrPunctuation);
             if (!result.IsDefined)
                 return null;
 

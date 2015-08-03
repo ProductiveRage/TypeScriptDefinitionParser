@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Text;
 
 namespace TypeScriptDefinitionParser.ContentReaders
@@ -15,7 +14,7 @@ namespace TypeScriptDefinitionParser.ContentReaders
             return Optional.For(reader);
         }
 
-        public static Optional<MatchResult<string>> MatchAny(this IReadStringContent reader, ImmutableHashSet<char> acceptableTerminators)
+        public static Optional<MatchResult<string>> MatchAnythingUntil(this IReadStringContent reader, ImmutableHashSet<char> acceptableTerminators)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
