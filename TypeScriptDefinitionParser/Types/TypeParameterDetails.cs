@@ -24,5 +24,10 @@ namespace TypeScriptDefinitionParser.Types
         public IdentifierDetails Name { get; }
         public Optional<IdentifierDetails> TypeConstraint { get; }
         public SourceRangeDetails SourceRange { get; }
+
+        public override string ToString()
+        {
+            return $"{Name}" + (TypeConstraint.IsDefined ? $" extends {TypeConstraint.Value}" : "");
+        }
     }
 }

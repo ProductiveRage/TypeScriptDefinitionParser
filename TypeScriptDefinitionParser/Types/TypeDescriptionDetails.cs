@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace TypeScriptDefinitionParser.Types
 {
-    [DebuggerDisplay("{Value}")]
     public sealed class TypeDescriptionDetails : IType
     {
         public TypeDescriptionDetails(string value, SourceRangeDetails sourceRange)
