@@ -25,9 +25,6 @@ namespace TypeScriptDefinitionParser.Types
         public Optional<IdentifierDetails> TypeConstraint { get; }
         public SourceRangeDetails SourceRange { get; }
 
-        public override string ToString()
-        {
-            return $"{Name}" + (TypeConstraint.IsDefined ? $" extends {TypeConstraint.Value}" : "");
-        }
+        public override string ToString() => $"{Name}" + (TypeConstraint.IsDefined ? $" extends {TypeConstraint.Value}" : "");
     }
 }
