@@ -4,7 +4,7 @@ namespace TypeScriptDefinitionParser.Types
 {
     public sealed class GenericTypeParameterDetails : IType
     {
-        public GenericTypeParameterDetails(NamedType name, Optional<NamedType> typeConstraint)
+        public GenericTypeParameterDetails(NamedTypeDetails name, Optional<NamedTypeDetails> typeConstraint)
         {
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
@@ -21,8 +21,8 @@ namespace TypeScriptDefinitionParser.Types
             );
         }
 
-        public NamedType Name { get; }
-        public Optional<NamedType> TypeConstraint { get; }
+        public NamedTypeDetails Name { get; }
+        public Optional<NamedTypeDetails> TypeConstraint { get; }
         public SourceRangeDetails SourceRange { get; }
 
         public override string ToString() => $"{Name}" + (TypeConstraint.IsDefined ? $" extends {TypeConstraint.Value}" : "");

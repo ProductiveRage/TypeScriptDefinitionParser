@@ -9,7 +9,7 @@ namespace TypeScriptDefinitionParser.Types
         public InterfaceDetails(
             IdentifierDetails name,
             ImmutableList<GenericTypeParameterDetails> genericTypeParams,
-            ImmutableList<NamedType> baseTypes,
+            ImmutableList<NamedTypeDetails> baseTypes,
             ImmutableList<PropertyDetails> contents,
             SourceRangeDetails source)
         {
@@ -39,7 +39,7 @@ namespace TypeScriptDefinitionParser.Types
 
         public IdentifierDetails Name { get; }
         public ImmutableList<GenericTypeParameterDetails> GenericTypeParams { get; }
-        public ImmutableList<NamedType> BaseTypes { get; }
+        public ImmutableList<NamedTypeDetails> BaseTypes { get; }
         public ImmutableList<PropertyDetails> Contents { get; }
         public SourceRangeDetails SourceRange { get; }
     }
