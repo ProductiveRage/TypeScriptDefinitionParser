@@ -62,7 +62,7 @@ namespace TypeScriptDefinitionParser
 
         public override bool Equals(object obj)
         {
-            if (obj is Optional<T>)
+            if (!(obj is Optional<T>))
                 return false;
 
             var otherOptional = (Optional<T>)obj;
