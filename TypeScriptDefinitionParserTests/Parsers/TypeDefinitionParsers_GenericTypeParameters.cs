@@ -36,20 +36,73 @@ namespace TypeScriptDefinitionParserTests.Parsers
         {
             AssertResultsMatch(
                 MatchResult.New(
-                    ImmutableList<TypeParameterDetails>.Empty.Add(
-                        new TypeParameterDetails(
+                    ImmutableList<TypeParameterDetails>.Empty
+                        .Add(new TypeParameterDetails(
                             new IdentifierDetails("T", new SourceRangeDetails(1, 1)),
                             typeConstraint: Optional<IdentifierDetails>.Missing
-                        )
-                    ),
+                        )),
                     new StringNavigator("")
                 ),
                 TypeDefinitionParsers.GenericTypeParameters(new StringNavigator("<T>"))
             );
         }
 
-        // TODO: SingleGenericTypeParameterWithBaseType
-        // TODO: MultipleGenericTypeParameters
+        [TestMethod]
+        public void SingleGenericTypeParameterWithBaseType()
+        {
+            AssertResultsMatch(
+                MatchResult.New(
+                    ImmutableList<TypeParameterDetails>.Empty
+                        .Add(new TypeParameterDetails(
+                            new IdentifierDetails("T", new SourceRangeDetails(1, 1)),
+                            new IdentifierDetails("Something", new SourceRangeDetails(11, 9))
+                        )),
+                    new StringNavigator("")
+                ),
+                TypeDefinitionParsers.GenericTypeParameters(new StringNavigator("<T extends Something>"))
+            );
+        }
+
+        [TestMethod]
+        public void TwoGenericTypeParameters()
+        {
+            AssertResultsMatch(
+                MatchResult.New(
+                    ImmutableList<TypeParameterDetails>.Empty
+                        .Add(new TypeParameterDetails(
+                            new IdentifierDetails("TKey", new SourceRangeDetails(1, 4)),
+                            typeConstraint: Optional<IdentifierDetails>.Missing
+                        ))
+                        .Add(new TypeParameterDetails(
+                            new IdentifierDetails("TValue", new SourceRangeDetails(7, 6)),
+                            typeConstraint: Optional<IdentifierDetails>.Missing
+                        )),
+                    new StringNavigator("")
+                ),
+                TypeDefinitionParsers.GenericTypeParameters(new StringNavigator("<TKey, TValue>"))
+            );
+        }
+
+        [TestMethod]
+        public void SingleGenericTypeParameterWithBaseTypeThenOneWithout()
+        {
+            AssertResultsMatch(
+                MatchResult.New(
+                    ImmutableList<TypeParameterDetails>.Empty
+                        .Add(new TypeParameterDetails(
+                            new IdentifierDetails("TKey", new SourceRangeDetails(1, 4)),
+                            new IdentifierDetails("Something", new SourceRangeDetails(14, 9))
+                        ))
+                        .Add(new TypeParameterDetails(
+                            new IdentifierDetails("TValue", new SourceRangeDetails(25, 6)),
+                            typeConstraint: Optional<IdentifierDetails>.Missing
+                        )),
+                    new StringNavigator("")
+                ),
+                TypeDefinitionParsers.GenericTypeParameters(new StringNavigator("<TKey extends Something, TValue>"))
+            );
+        }
+
 
         [TestMethod]
         public void NoLeadingBracket()
