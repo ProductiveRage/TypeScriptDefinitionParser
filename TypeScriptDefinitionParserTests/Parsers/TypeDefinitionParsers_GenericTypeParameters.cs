@@ -36,7 +36,7 @@ namespace TypeScriptDefinitionParserTests.Parsers
         {
             var content = "<T>";
             var expected = MatchResult.New(
-                ImmutableList<GenericTypeParameterDetails>.Empty
+                value: ImmutableList<GenericTypeParameterDetails>.Empty
                     .Add(new GenericTypeParameterDetails(
                         new NamedTypeDetails(
                             name: new IdentifierDetails("T", new SourceRangeDetails(1, 1)),
@@ -44,7 +44,7 @@ namespace TypeScriptDefinitionParserTests.Parsers
                         ),
                         typeConstraint: Optional<NamedTypeDetails>.Missing
                     )),
-                new StringNavigator("")
+                reader: new StringNavigator("")
             );
             AssertResultsMatch(expected, TypeDefinitionParsers.GenericTypeParameters(new StringNavigator(content)));
         }
@@ -54,7 +54,7 @@ namespace TypeScriptDefinitionParserTests.Parsers
         {
             var content = "<T extends Something>";
             var expected = MatchResult.New(
-                ImmutableList<GenericTypeParameterDetails>.Empty
+                value: ImmutableList<GenericTypeParameterDetails>.Empty
                     .Add(new GenericTypeParameterDetails(
                         name: new NamedTypeDetails(
                             name: new IdentifierDetails("T", new SourceRangeDetails(1, 1)),
@@ -65,7 +65,7 @@ namespace TypeScriptDefinitionParserTests.Parsers
                             genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
                         )
                     )),
-                new StringNavigator("")
+                reader: new StringNavigator("")
             );
             AssertResultsMatch(expected, TypeDefinitionParsers.GenericTypeParameters(new StringNavigator(content)));
         }
@@ -75,7 +75,7 @@ namespace TypeScriptDefinitionParserTests.Parsers
         {
             var content = "<TKey, TValue>";
             var expected = MatchResult.New(
-                ImmutableList<GenericTypeParameterDetails>.Empty
+                value: ImmutableList<GenericTypeParameterDetails>.Empty
                     .Add(new GenericTypeParameterDetails(
                         new NamedTypeDetails(
                             name: new IdentifierDetails("TKey", new SourceRangeDetails(1, 4)),
@@ -90,7 +90,7 @@ namespace TypeScriptDefinitionParserTests.Parsers
                         ),
                         typeConstraint: Optional<NamedTypeDetails>.Missing
                     )),
-                new StringNavigator("")
+                reader: new StringNavigator("")
             );
             AssertResultsMatch(expected, TypeDefinitionParsers.GenericTypeParameters(new StringNavigator(content)));
         }
@@ -100,7 +100,7 @@ namespace TypeScriptDefinitionParserTests.Parsers
         {
             var content = "<TKey extends Something, TValue>";
             var expected = MatchResult.New(
-                ImmutableList<GenericTypeParameterDetails>.Empty
+                value: ImmutableList<GenericTypeParameterDetails>.Empty
                     .Add(new GenericTypeParameterDetails(
                         name: new NamedTypeDetails(
                             name: new IdentifierDetails("TKey", new SourceRangeDetails(1, 4)),
@@ -118,7 +118,7 @@ namespace TypeScriptDefinitionParserTests.Parsers
                         ),
                         typeConstraint: Optional<NamedTypeDetails>.Missing
                     )),
-                new StringNavigator("")
+                reader: new StringNavigator("")
             );
             AssertResultsMatch(expected, TypeDefinitionParsers.GenericTypeParameters(new StringNavigator(content)));
         }
