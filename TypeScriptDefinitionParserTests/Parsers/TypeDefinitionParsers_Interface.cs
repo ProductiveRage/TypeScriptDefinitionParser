@@ -36,7 +36,7 @@ namespace TypeScriptDefinitionParserTests.Parsers
         {
             var content = "interface DOMAttributes extends Props<DOMComponent<any>> { }";
             var expected = MatchResult.New(
-                new InterfaceDetails(
+                value: new InterfaceDetails(
                     name: new IdentifierDetails("DOMAttributes", new SourceRangeDetails(10, 13)),
                     genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty,
                     baseTypes: ImmutableList<NamedTypeDetails>.Empty.Add(new NamedTypeDetails(
@@ -58,7 +58,45 @@ namespace TypeScriptDefinitionParserTests.Parsers
                     contents: ImmutableList<PropertyDetails>.Empty,
                     source: new SourceRangeDetails(0, 60)
                 ),
-                new StringNavigator("")
+                reader: new StringNavigator("")
+            );
+            Assert.IsTrue(
+                DoOptionalMatchResultsMatch(
+                    Optional.For(expected),
+                    TypeDefinitionParsers.Interface(new StringNavigator(content)),
+                    DoInterfaceDetailsMatch
+                )
+            );
+        }
+
+        [TestMethod]
+        public void InterfaceWithGenericTypeParameterThatExtendsAnotherGenericInterfaceButThatHasNoProperties()
+        {
+            var content = "interface ClassicElement<P> extends ReactElement<P> { }";
+            var expected = MatchResult.New(
+                value: new InterfaceDetails(
+                    name: new IdentifierDetails("ClassicElement", new SourceRangeDetails(10, 14)),
+                    genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty.Add(new GenericTypeParameterDetails(
+                        name: new NamedTypeDetails(
+                            name: new IdentifierDetails("P", new SourceRangeDetails(25, 1)),
+                            genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
+                        ),
+                        typeConstraint: Optional<NamedTypeDetails>.Missing
+                    )),
+                    baseTypes: ImmutableList<NamedTypeDetails>.Empty.Add(new NamedTypeDetails(
+                        name: new IdentifierDetails("ReactElement", new SourceRangeDetails(36, 12)),
+                        genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty.Add(new GenericTypeParameterDetails(
+                            name: new NamedTypeDetails(
+                                name: new IdentifierDetails("P", new SourceRangeDetails(49, 1)),
+                                genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
+                            ),
+                            typeConstraint: Optional<NamedTypeDetails>.Missing
+                        ))
+                    )),
+                    contents: ImmutableList<PropertyDetails>.Empty,
+                    source: new SourceRangeDetails(0, 55)
+                ),
+                reader: new StringNavigator("")
             );
             Assert.IsTrue(
                 DoOptionalMatchResultsMatch(
