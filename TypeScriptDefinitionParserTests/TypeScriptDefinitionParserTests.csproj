@@ -57,6 +57,7 @@
     <Compile Include="EqualityTesters\TypeScriptTypes.cs" />
     <Compile Include="EqualityTesters\Common.cs" />
     <Compile Include="IReadStringContent_Extensions.cs" />
+    <Compile Include="Parsers\TypeDefinitionParsers_Interface.cs" />
     <Compile Include="Parsers\TypeDefinitionParsers_GenericTypeParameters.cs" />
     <Compile Include="Parsers\StandardParsersTests_MatchCharacter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
