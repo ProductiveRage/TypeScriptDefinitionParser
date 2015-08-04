@@ -25,7 +25,7 @@ namespace TypeScriptDefinitionParserTests.Parsers
         {
             Assert.IsTrue(
                 DoOptionalMatchResultsMatch(
-                    Optional<MatchResult<ImmutableList<TypeParameterDetails>>>.Missing,
+                    Optional<MatchResult<ImmutableList<GenericTypeParameterDetails>>>.Missing,
                     TypeDefinitionParsers.GenericTypeParameters(new StringNavigator(""))
                 )
             );
@@ -36,10 +36,13 @@ namespace TypeScriptDefinitionParserTests.Parsers
         {
             AssertResultsMatch(
                 MatchResult.New(
-                    ImmutableList<TypeParameterDetails>.Empty
-                        .Add(new TypeParameterDetails(
-                            new IdentifierDetails("T", new SourceRangeDetails(1, 1)),
-                            typeConstraint: Optional<IdentifierDetails>.Missing
+                    ImmutableList<GenericTypeParameterDetails>.Empty
+                        .Add(new GenericTypeParameterDetails(
+                            new NamedType(
+                                name: new IdentifierDetails("T", new SourceRangeDetails(1, 1)),
+                                genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
+                            ),
+                            typeConstraint: Optional<NamedType>.Missing
                         )),
                     new StringNavigator("")
                 ),
@@ -52,10 +55,16 @@ namespace TypeScriptDefinitionParserTests.Parsers
         {
             AssertResultsMatch(
                 MatchResult.New(
-                    ImmutableList<TypeParameterDetails>.Empty
-                        .Add(new TypeParameterDetails(
-                            new IdentifierDetails("T", new SourceRangeDetails(1, 1)),
-                            new IdentifierDetails("Something", new SourceRangeDetails(11, 9))
+                    ImmutableList<GenericTypeParameterDetails>.Empty
+                        .Add(new GenericTypeParameterDetails(
+                            name: new NamedType(
+                                name: new IdentifierDetails("T", new SourceRangeDetails(1, 1)),
+                                genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
+                            ),
+                            typeConstraint: new NamedType(
+                                name: new IdentifierDetails("Something", new SourceRangeDetails(11, 9)),
+                                genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
+                            )
                         )),
                     new StringNavigator("")
                 ),
@@ -68,14 +77,20 @@ namespace TypeScriptDefinitionParserTests.Parsers
         {
             AssertResultsMatch(
                 MatchResult.New(
-                    ImmutableList<TypeParameterDetails>.Empty
-                        .Add(new TypeParameterDetails(
-                            new IdentifierDetails("TKey", new SourceRangeDetails(1, 4)),
-                            typeConstraint: Optional<IdentifierDetails>.Missing
+                    ImmutableList<GenericTypeParameterDetails>.Empty
+                        .Add(new GenericTypeParameterDetails(
+                            new NamedType(
+                                name: new IdentifierDetails("TKey", new SourceRangeDetails(1, 4)),
+                                genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
+                            ),
+                            typeConstraint: Optional<NamedType>.Missing
                         ))
-                        .Add(new TypeParameterDetails(
-                            new IdentifierDetails("TValue", new SourceRangeDetails(7, 6)),
-                            typeConstraint: Optional<IdentifierDetails>.Missing
+                        .Add(new GenericTypeParameterDetails(
+                            new NamedType(
+                                name: new IdentifierDetails("TValue", new SourceRangeDetails(7, 6)),
+                                genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
+                            ),
+                            typeConstraint: Optional<NamedType>.Missing
                         )),
                     new StringNavigator("")
                 ),
@@ -88,14 +103,23 @@ namespace TypeScriptDefinitionParserTests.Parsers
         {
             AssertResultsMatch(
                 MatchResult.New(
-                    ImmutableList<TypeParameterDetails>.Empty
-                        .Add(new TypeParameterDetails(
-                            new IdentifierDetails("TKey", new SourceRangeDetails(1, 4)),
-                            new IdentifierDetails("Something", new SourceRangeDetails(14, 9))
+                    ImmutableList<GenericTypeParameterDetails>.Empty
+                        .Add(new GenericTypeParameterDetails(
+                            name: new NamedType(
+                                name: new IdentifierDetails("TKey", new SourceRangeDetails(1, 4)),
+                                genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
+                            ),
+                            typeConstraint: new NamedType(
+                                name: new IdentifierDetails("Something", new SourceRangeDetails(14, 9)),
+                                genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
+                            )
                         ))
-                        .Add(new TypeParameterDetails(
-                            new IdentifierDetails("TValue", new SourceRangeDetails(25, 6)),
-                            typeConstraint: Optional<IdentifierDetails>.Missing
+                        .Add(new GenericTypeParameterDetails(
+                            new NamedType(
+                                name: new IdentifierDetails("TValue", new SourceRangeDetails(25, 6)),
+                                genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
+                            ),
+                            typeConstraint: Optional<NamedType>.Missing
                         )),
                     new StringNavigator("")
                 ),
@@ -108,18 +132,18 @@ namespace TypeScriptDefinitionParserTests.Parsers
         public void NoLeadingBracket()
         {
             Assert.AreEqual(
-                Optional<MatchResult<ImmutableList<TypeParameterDetails>>>.Missing,
+                Optional<MatchResult<ImmutableList<GenericTypeParameterDetails>>>.Missing,
                 TypeDefinitionParsers.GenericTypeParameters(new StringNavigator("T"))
             );
         }
 
-        private void AssertResultsMatch(Optional<MatchResult<ImmutableList<TypeParameterDetails>>> expected, Optional<MatchResult<ImmutableList<TypeParameterDetails>>> actual)
+        private void AssertResultsMatch(Optional<MatchResult<ImmutableList<GenericTypeParameterDetails>>> expected, Optional<MatchResult<ImmutableList<GenericTypeParameterDetails>>> actual)
         {
             Assert.IsTrue(
                 DoOptionalMatchResultsMatch(
                     expected,
                     actual,
-                    (x, y) => DoImmutableListsMatch(x, y, DoTypeParameterDetailsMatch)
+                    (x, y) => DoImmutableListsMatch(x, y, DoGenericTypeParameterDetailsMatch)
                 )
             );
         }

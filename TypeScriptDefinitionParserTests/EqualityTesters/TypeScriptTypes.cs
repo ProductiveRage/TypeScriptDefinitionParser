@@ -6,7 +6,20 @@ namespace TypeScriptDefinitionParserTests.EqualityTesters
 {
     public static class TypeScriptTypes
     {
-        public static bool DoTypeParameterDetailsMatch(TypeParameterDetails x, TypeParameterDetails y)
+        public static bool DoGenericTypeParameterDetailsMatch(GenericTypeParameterDetails x, GenericTypeParameterDetails y)
+        {
+            if (x == null)
+                throw new ArgumentNullException(nameof(x));
+            if (y == null)
+                throw new ArgumentNullException(nameof(y));
+
+            return
+                DoNamedTypesMatch(x.Name, y.Name) &&
+                DoOptionalValuesMatch(x.TypeConstraint, y.TypeConstraint, DoNamedTypesMatch) &&
+                DoSourceRangeDetailsMatch(x.SourceRange, y.SourceRange);
+        }
+
+        public static bool DoNamedTypesMatch(NamedType x, NamedType y)
         {
             if (x == null)
                 throw new ArgumentNullException(nameof(x));
@@ -15,10 +28,9 @@ namespace TypeScriptDefinitionParserTests.EqualityTesters
 
             return
                 DoIdentifierDetailsMatch(x.Name, y.Name) &&
-                DoOptionalValuesMatch(x.TypeConstraint, y.TypeConstraint, DoIdentifierDetailsMatch) &&
+                DoImmutableListsMatch(x.GenericTypeParams, y.GenericTypeParams, DoGenericTypeParameterDetailsMatch) &&
                 DoSourceRangeDetailsMatch(x.SourceRange, y.SourceRange);
         }
-
 
         public static bool DoIdentifierDetailsMatch(IdentifierDetails x, IdentifierDetails y)
         {
