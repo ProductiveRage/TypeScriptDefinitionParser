@@ -6,7 +6,12 @@ namespace TypeScriptDefinitionParser.Types
 {
     public sealed class InterfaceDetails : IType
     {
-        public InterfaceDetails(IdentifierDetails name, ImmutableList<TypeParameterDetails> genericTypeParams, ImmutableList<PropertyDetails> contents, SourceRangeDetails source)
+        public InterfaceDetails(
+            IdentifierDetails name,
+            ImmutableList<GenericTypeParameterDetails> genericTypeParams,
+            ImmutableList<NamedType> baseTypes,
+            ImmutableList<PropertyDetails> contents,
+            SourceRangeDetails source)
         {
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
@@ -14,6 +19,10 @@ namespace TypeScriptDefinitionParser.Types
                 throw new ArgumentNullException(nameof(genericTypeParams));
             if (genericTypeParams.Any(t => t == null))
                 throw new ArgumentException("Null reference encountered in set", nameof(genericTypeParams));
+            if (baseTypes == null)
+                throw new ArgumentNullException(nameof(baseTypes));
+            if (baseTypes.Any(t => t == null))
+                throw new ArgumentException("Null reference encountered in set", nameof(baseTypes));
             if (contents == null)
                 throw new ArgumentNullException(nameof(contents));
             if (contents.Any(p => p == null))
@@ -23,12 +32,14 @@ namespace TypeScriptDefinitionParser.Types
 
             Name = name;
             GenericTypeParams = genericTypeParams;
+            BaseTypes = baseTypes;
             Contents = contents;
             SourceRange = source;
         }
 
         public IdentifierDetails Name { get; }
-        public ImmutableList<TypeParameterDetails> GenericTypeParams { get; }
+        public ImmutableList<GenericTypeParameterDetails> GenericTypeParams { get; }
+        public ImmutableList<NamedType> BaseTypes { get; }
         public ImmutableList<PropertyDetails> Contents { get; }
         public SourceRangeDetails SourceRange { get; }
     }

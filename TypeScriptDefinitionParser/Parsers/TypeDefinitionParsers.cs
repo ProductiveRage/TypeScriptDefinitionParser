@@ -25,6 +25,32 @@ namespace TypeScriptDefinitionParser.Parsers
             );
         }
 
+        public static Optional<MatchResult<NamedType>> NamedType(IReadStringContent reader)
+        {
+            if (reader == null)
+                throw new ArgumentNullException(nameof(reader));
+
+            var name = Optional<IdentifierDetails>.Missing;
+            var genericTypeParameters = Optional<ImmutableList<GenericTypeParameterDetails>>.Missing;
+            var readerAfterValue = reader
+                .StartMatching()
+                .Then(Identifier, value => name = value)
+                .ThenOptionally(Whitespace)
+                .If(Match('<')).Then(GenericTypeParameters, value => genericTypeParameters = value);
+            if (!readerAfterValue.IsDefined)
+                return null;
+            if (genericTypeParameters.IsDefined && !genericTypeParameters.Value.Any())
+                throw new ArgumentException($"Invalid named type content starting at {reader.Index} - has generic type param opening bracket but zero type params present");
+
+            return MatchResult.New(
+                new NamedType(
+                    name.Value,
+                    genericTypeParameters.GetValueOrDefault(ImmutableList<GenericTypeParameterDetails>.Empty)
+                ),
+                readerAfterValue.Value
+            );
+        }
+
         public static Optional<MatchResult<TypeDescriptionDetails>> TypeDescription(IReadStringContent reader)
         {
             if (reader == null)
@@ -47,9 +73,10 @@ namespace TypeScriptDefinitionParser.Parsers
 
             var identifiedInterface = false;
             var interfaceName = Optional<IdentifierDetails>.Missing;
-            var genericTypeParameters = Optional<ImmutableList<TypeParameterDetails>>.Missing;
+            var genericTypeParameters = Optional<ImmutableList<GenericTypeParameterDetails>>.Missing;
+            var baseTypes = Optional<ImmutableList<NamedType>>.Missing;
             var properties = ImmutableList<PropertyDetails>.Empty;
-            var readerAfterInterfaceContent = reader
+            var readerAfterValue = reader
                 .StartMatching()
                 .Then(Match("interface"))
                 .Then(Whitespace)
@@ -59,13 +86,14 @@ namespace TypeScriptDefinitionParser.Parsers
                 .ThenOptionally(Whitespace)
                 .If(Match('<')).Then(GenericTypeParameters, value => genericTypeParameters = value)
                 .ThenOptionally(Whitespace)
-                // TODO: Check for interfaces that this one implements (eg. "interface Square extends Shape, PenStroke")
+                .ThenOptionally(InheritanceChain, value => baseTypes = value)
+                .ThenOptionally(Whitespace)
                 .Then(Match('{'))
                 .ThenOptionally(Whitespace)
                 .ThenOptionally(InterfaceProperties, value => properties = value)
                 .ThenOptionally(Whitespace)
                 .Then(Match('}'));
-            if (!readerAfterInterfaceContent.IsDefined)
+            if (!readerAfterValue.IsDefined)
             {
                 if (identifiedInterface)
                     throw new ArgumentException($"Invalid interface content starting at {reader.Index}");
@@ -77,15 +105,16 @@ namespace TypeScriptDefinitionParser.Parsers
             return MatchResult.New(
                 new InterfaceDetails(
                     interfaceName.Value,
-                    genericTypeParameters.GetValueOrDefault(ImmutableList<TypeParameterDetails>.Empty),
+                    genericTypeParameters.GetValueOrDefault(ImmutableList<GenericTypeParameterDetails>.Empty),
+                    baseTypes.GetValueOrDefault(ImmutableList<NamedType>.Empty),
                     properties,
-                    new SourceRangeDetails(reader.Index, readerAfterInterfaceContent.Value.Index - reader.Index)
+                    new SourceRangeDetails(reader.Index, readerAfterValue.Value.Index - reader.Index)
                 ),
-                readerAfterInterfaceContent.Value
+                readerAfterValue.Value
             );
         }
 
-        public static Optional<MatchResult<ImmutableList<TypeParameterDetails>>> GenericTypeParameters(IReadStringContent reader)
+        public static Optional<MatchResult<ImmutableList<GenericTypeParameterDetails>>> GenericTypeParameters(IReadStringContent reader)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -94,7 +123,7 @@ namespace TypeScriptDefinitionParser.Parsers
             if (!readerAtTypeParameterDefinition.IsDefined)
                 return null;
 
-            var genericTypeParameters = ImmutableList<TypeParameterDetails>.Empty;
+            var genericTypeParameters = ImmutableList<GenericTypeParameterDetails>.Empty;
             while (true)
             {
                 var readerAfterImminentClosingBrace = readerAtTypeParameterDefinition.ThenOptionally(Whitespace).Then(Match('>'));
@@ -110,17 +139,17 @@ namespace TypeScriptDefinitionParser.Parsers
                         readerAtTypeParameterDefinition = readerAfterTypeParameterSeparator;
                 }
 
-                var identifier = Optional<IdentifierDetails>.Missing;
-                var typeConstraint = Optional<IdentifierDetails>.Missing;
+                var name = Optional<NamedType>.Missing;
+                var typeConstraint = Optional<NamedType>.Missing;
                 var readerAfterValue = readerAtTypeParameterDefinition
                     .ThenOptionally(Whitespace)
-                    .Then(Identifier, value => identifier = value)
+                    .Then(NamedType, value => name = value)
                     .ThenOptionally(Whitespace)
                     .If(Match("extends")).Then(BaseType, value => typeConstraint = value);
                 if (!readerAfterValue.IsDefined)
                     break;
-                genericTypeParameters = genericTypeParameters.Add(new TypeParameterDetails(
-                    identifier.Value,
+                genericTypeParameters = genericTypeParameters.Add(new GenericTypeParameterDetails(
+                    name.Value,
                     typeConstraint
                 ));
                 readerAtTypeParameterDefinition = readerAfterValue;
@@ -128,7 +157,7 @@ namespace TypeScriptDefinitionParser.Parsers
             return MatchResult.New(genericTypeParameters, reader);
         }
 
-        public static Optional<MatchResult<IdentifierDetails>> BaseType(IReadStringContent reader)
+        public static Optional<MatchResult<NamedType>> BaseType(IReadStringContent reader)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -140,9 +169,9 @@ namespace TypeScriptDefinitionParser.Parsers
             return MatchResult.New(result.Value.Result.Single(), result.Value.Reader);
         }
 
-        public static Optional<MatchResult<ImmutableList<IdentifierDetails>>> InheritanceChain(IReadStringContent reader) => InheritanceChain(reader, supportMultipleBaseTypes: true);
+        public static Optional<MatchResult<ImmutableList<NamedType>>> InheritanceChain(IReadStringContent reader) => InheritanceChain(reader, supportMultipleBaseTypes: true);
 
-        private static Optional<MatchResult<ImmutableList<IdentifierDetails>>> InheritanceChain(IReadStringContent reader, bool supportMultipleBaseTypes)
+        private static Optional<MatchResult<ImmutableList<NamedType>>> InheritanceChain(IReadStringContent reader, bool supportMultipleBaseTypes)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -151,7 +180,7 @@ namespace TypeScriptDefinitionParser.Parsers
             if (!readerAtTypeList.IsDefined)
                 return null;
 
-            var baseTypes = ImmutableList<IdentifierDetails>.Empty;
+            var baseTypes = ImmutableList<NamedType>.Empty;
             while (true)
             {
                 if (baseTypes.Any())
@@ -161,13 +190,13 @@ namespace TypeScriptDefinitionParser.Parsers
                         readerAtTypeList = readerAfterTypeParameterSeparator;
                 }
 
-                var identifier = Optional<IdentifierDetails>.Missing;
+                var name = Optional<NamedType>.Missing;
                 var readerAfterValue = readerAtTypeList
                     .ThenOptionally(Whitespace)
-                    .Then(Identifier, value => identifier = value);
+                    .Then(NamedType, value => name = value);
                 if (!readerAfterValue.IsDefined)
                     break;
-                baseTypes = baseTypes.Add(identifier.Value);
+                baseTypes = baseTypes.Add(name.Value);
                 readerAtTypeList = readerAfterValue;
                 if (!supportMultipleBaseTypes)
                     break;
