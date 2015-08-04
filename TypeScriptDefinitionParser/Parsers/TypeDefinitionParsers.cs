@@ -211,7 +211,7 @@ namespace TypeScriptDefinitionParser.Parsers
             if (readerAfter == null)
                 throw new ArgumentNullException(nameof(readerAfter));
 
-            return new SourceRangeDetails(readerStart.Index, (readerAfter.Index - readerStart.Index) + 1);
+            return new SourceRangeDetails(readerStart.Index, readerAfter.Index - readerStart.Index);
         }
     }
 }
