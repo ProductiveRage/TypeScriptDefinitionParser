@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace TypeScriptDefinitionParser.Types
 {
-    public sealed class NamedType : IType
+    public sealed class NamedTypeDetails : IType
     {
-        public NamedType(IdentifierDetails name, ImmutableList<GenericTypeParameterDetails> genericTypeParams)
+        public NamedTypeDetails(IdentifierDetails name, ImmutableList<GenericTypeParameterDetails> genericTypeParams)
         {
             if (name == null)
                 throw new ArgumentNullException(nameof(name));

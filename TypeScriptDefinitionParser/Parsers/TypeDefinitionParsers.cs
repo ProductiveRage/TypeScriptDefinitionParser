@@ -25,7 +25,7 @@ namespace TypeScriptDefinitionParser.Parsers
             );
         }
 
-        public static Optional<MatchResult<NamedType>> NamedType(IReadStringContent reader)
+        public static Optional<MatchResult<NamedTypeDetails>> NamedType(IReadStringContent reader)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -43,7 +43,7 @@ namespace TypeScriptDefinitionParser.Parsers
                 throw new ArgumentException($"Invalid named type content starting at {reader.Index} - has generic type param opening bracket but zero type params present");
 
             return MatchResult.New(
-                new NamedType(
+                new NamedTypeDetails(
                     name.Value,
                     genericTypeParameters.GetValueOrDefault(ImmutableList<GenericTypeParameterDetails>.Empty)
                 ),
@@ -74,7 +74,7 @@ namespace TypeScriptDefinitionParser.Parsers
             var identifiedInterface = false;
             var interfaceName = Optional<IdentifierDetails>.Missing;
             var genericTypeParameters = Optional<ImmutableList<GenericTypeParameterDetails>>.Missing;
-            var baseTypes = Optional<ImmutableList<NamedType>>.Missing;
+            var baseTypes = Optional<ImmutableList<NamedTypeDetails>>.Missing;
             var properties = ImmutableList<PropertyDetails>.Empty;
             var readerAfterValue = reader
                 .StartMatching()
@@ -106,7 +106,7 @@ namespace TypeScriptDefinitionParser.Parsers
                 new InterfaceDetails(
                     interfaceName.Value,
                     genericTypeParameters.GetValueOrDefault(ImmutableList<GenericTypeParameterDetails>.Empty),
-                    baseTypes.GetValueOrDefault(ImmutableList<NamedType>.Empty),
+                    baseTypes.GetValueOrDefault(ImmutableList<NamedTypeDetails>.Empty),
                     properties,
                     new SourceRangeDetails(reader.Index, readerAfterValue.Value.Index - reader.Index)
                 ),
@@ -139,8 +139,8 @@ namespace TypeScriptDefinitionParser.Parsers
                         readerAtTypeParameterDefinition = readerAfterTypeParameterSeparator;
                 }
 
-                var name = Optional<NamedType>.Missing;
-                var typeConstraint = Optional<NamedType>.Missing;
+                var name = Optional<NamedTypeDetails>.Missing;
+                var typeConstraint = Optional<NamedTypeDetails>.Missing;
                 var readerAfterValue = readerAtTypeParameterDefinition
                     .ThenOptionally(Whitespace)
                     .Then(NamedType, value => name = value)
@@ -157,7 +157,7 @@ namespace TypeScriptDefinitionParser.Parsers
             return MatchResult.New(genericTypeParameters, reader);
         }
 
-        public static Optional<MatchResult<NamedType>> BaseType(IReadStringContent reader)
+        private static Optional<MatchResult<NamedTypeDetails>> BaseType(IReadStringContent reader)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -169,9 +169,9 @@ namespace TypeScriptDefinitionParser.Parsers
             return MatchResult.New(result.Value.Result.Single(), result.Value.Reader);
         }
 
-        public static Optional<MatchResult<ImmutableList<NamedType>>> InheritanceChain(IReadStringContent reader) => InheritanceChain(reader, supportMultipleBaseTypes: true);
+        private static Optional<MatchResult<ImmutableList<NamedTypeDetails>>> InheritanceChain(IReadStringContent reader) => InheritanceChain(reader, supportMultipleBaseTypes: true);
 
-        private static Optional<MatchResult<ImmutableList<NamedType>>> InheritanceChain(IReadStringContent reader, bool supportMultipleBaseTypes)
+        private static Optional<MatchResult<ImmutableList<NamedTypeDetails>>> InheritanceChain(IReadStringContent reader, bool supportMultipleBaseTypes)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -180,7 +180,7 @@ namespace TypeScriptDefinitionParser.Parsers
             if (!readerAtTypeList.IsDefined)
                 return null;
 
-            var baseTypes = ImmutableList<NamedType>.Empty;
+            var baseTypes = ImmutableList<NamedTypeDetails>.Empty;
             while (true)
             {
                 if (baseTypes.Any())
@@ -190,7 +190,7 @@ namespace TypeScriptDefinitionParser.Parsers
                         readerAtTypeList = readerAfterTypeParameterSeparator;
                 }
 
-                var name = Optional<NamedType>.Missing;
+                var name = Optional<NamedTypeDetails>.Missing;
                 var readerAfterValue = readerAtTypeList
                     .ThenOptionally(Whitespace)
                     .Then(NamedType, value => name = value);

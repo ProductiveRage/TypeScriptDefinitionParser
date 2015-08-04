@@ -14,12 +14,12 @@ namespace TypeScriptDefinitionParserTests.EqualityTesters
                 throw new ArgumentNullException(nameof(y));
 
             return
-                DoNamedTypesMatch(x.Name, y.Name) &&
-                DoOptionalValuesMatch(x.TypeConstraint, y.TypeConstraint, DoNamedTypesMatch) &&
+                DoNamedTypeDetailsMatch(x.Name, y.Name) &&
+                DoOptionalValuesMatch(x.TypeConstraint, y.TypeConstraint, DoNamedTypeDetailsMatch) &&
                 DoSourceRangeDetailsMatch(x.SourceRange, y.SourceRange);
         }
 
-        public static bool DoNamedTypesMatch(NamedType x, NamedType y)
+        public static bool DoNamedTypeDetailsMatch(NamedTypeDetails x, NamedTypeDetails y)
         {
             if (x == null)
                 throw new ArgumentNullException(nameof(x));
