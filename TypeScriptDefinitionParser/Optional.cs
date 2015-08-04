@@ -59,31 +59,6 @@ namespace TypeScriptDefinitionParser
         /// <param name="defaultValue">The default value to use if a value was not specified.</param>
         /// <returns>The value.</returns>
         public T GetValueOrDefault(T defaultValue) => this.IsDefined ? this.value : defaultValue;
-
-        public override bool Equals(object obj)
-        {
-            if (!(obj is Optional<T>))
-                return false;
-
-            var otherOptional = (Optional<T>)obj;
-            if (!IsDefined && !otherOptional.IsDefined)
-                return true;
-            else if (!IsDefined || !otherOptional.IsDefined)
-                return false;
-
-            if ((Value == null) && (otherOptional.Value == null))
-                return true;
-            else if ((Value == null) || (otherOptional.Value == null))
-                return false;
-
-            return Value.Equals(otherOptional.Value);
-        }
-
-        public override int GetHashCode() => IsDefined ? 0 : ((Value == null) ? -1 : Value.GetHashCode());
-
-        public static bool operator ==(Optional<T> x, Optional<T> y) => x.Equals(y);
-
-        public static bool operator !=(Optional<T> x, Optional<T> y) => !x.Equals(y);
     }
 
     public static class Optional
