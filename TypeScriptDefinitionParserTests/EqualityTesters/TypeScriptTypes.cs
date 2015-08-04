@@ -6,6 +6,21 @@ namespace TypeScriptDefinitionParserTests.EqualityTesters
 {
     public static class TypeScriptTypes
     {
+        public static bool DoInterfaceDetailsMatch(InterfaceDetails x, InterfaceDetails y)
+        {
+            if (x == null)
+                throw new ArgumentNullException(nameof(x));
+            if (y == null)
+                throw new ArgumentNullException(nameof(y));
+
+            return
+                DoIdentifierDetailsMatch(x.Name, y.Name) &&
+                DoImmutableListsMatch(x.GenericTypeParams, y.GenericTypeParams, DoGenericTypeParameterDetailsMatch) &&
+                DoImmutableListsMatch(x.BaseTypes, y.BaseTypes, DoNamedTypeDetailsMatch) &&
+                DoImmutableListsMatch(x.Contents, y.Contents, DoPropertyDetailsMatch) &&
+                DoSourceRangeDetailsMatch(x.SourceRange, y.SourceRange);
+        }
+
         public static bool DoGenericTypeParameterDetailsMatch(GenericTypeParameterDetails x, GenericTypeParameterDetails y)
         {
             if (x == null)
@@ -40,6 +55,16 @@ namespace TypeScriptDefinitionParserTests.EqualityTesters
                 throw new ArgumentNullException(nameof(y));
 
             return (x.Value == y.Value) && DoSourceRangeDetailsMatch(x.SourceRange, y.SourceRange);
+        }
+
+        public static bool DoPropertyDetailsMatch(PropertyDetails x, PropertyDetails y)
+        {
+            if (x == null)
+                throw new ArgumentNullException(nameof(x));
+            if (y == null)
+                throw new ArgumentNullException(nameof(y));
+
+            throw new NotImplementedException(); // TODO
         }
 
         public static bool DoSourceRangeDetailsMatch(SourceRangeDetails x, SourceRangeDetails y)
