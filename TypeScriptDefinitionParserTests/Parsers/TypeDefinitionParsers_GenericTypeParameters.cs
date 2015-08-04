@@ -38,11 +38,11 @@ namespace TypeScriptDefinitionParserTests.Parsers
             var expected = MatchResult.New(
                 ImmutableList<GenericTypeParameterDetails>.Empty
                     .Add(new GenericTypeParameterDetails(
-                            new NamedType(
+                        new NamedTypeDetails(
                             name: new IdentifierDetails("T", new SourceRangeDetails(1, 1)),
                             genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
                         ),
-                            typeConstraint: Optional<NamedType>.Missing
+                        typeConstraint: Optional<NamedTypeDetails>.Missing
                     )),
                 new StringNavigator("")
             );
@@ -56,11 +56,11 @@ namespace TypeScriptDefinitionParserTests.Parsers
             var expected = MatchResult.New(
                 ImmutableList<GenericTypeParameterDetails>.Empty
                     .Add(new GenericTypeParameterDetails(
-                            name: new NamedType(
+                        name: new NamedTypeDetails(
                             name: new IdentifierDetails("T", new SourceRangeDetails(1, 1)),
                             genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
                         ),
-                            typeConstraint: new NamedType(
+                        typeConstraint: new NamedTypeDetails(
                             name: new IdentifierDetails("Something", new SourceRangeDetails(11, 9)),
                             genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
                         )
@@ -77,18 +77,18 @@ namespace TypeScriptDefinitionParserTests.Parsers
             var expected = MatchResult.New(
                 ImmutableList<GenericTypeParameterDetails>.Empty
                     .Add(new GenericTypeParameterDetails(
-                            new NamedType(
+                        new NamedTypeDetails(
                             name: new IdentifierDetails("TKey", new SourceRangeDetails(1, 4)),
                             genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
                         ),
-                            typeConstraint: Optional<NamedType>.Missing
+                        typeConstraint: Optional<NamedTypeDetails>.Missing
                     ))
                     .Add(new GenericTypeParameterDetails(
-                            new NamedType(
+                        new NamedTypeDetails(
                             name: new IdentifierDetails("TValue", new SourceRangeDetails(7, 6)),
                             genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
                         ),
-                            typeConstraint: Optional<NamedType>.Missing
+                        typeConstraint: Optional<NamedTypeDetails>.Missing
                     )),
                 new StringNavigator("")
             );
@@ -102,21 +102,21 @@ namespace TypeScriptDefinitionParserTests.Parsers
             var expected = MatchResult.New(
                 ImmutableList<GenericTypeParameterDetails>.Empty
                     .Add(new GenericTypeParameterDetails(
-                            name: new NamedType(
+                        name: new NamedTypeDetails(
                             name: new IdentifierDetails("TKey", new SourceRangeDetails(1, 4)),
                             genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
                         ),
-                            typeConstraint: new NamedType(
+                        typeConstraint: new NamedTypeDetails(
                             name: new IdentifierDetails("Something", new SourceRangeDetails(14, 9)),
                             genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
                         )
                     ))
                     .Add(new GenericTypeParameterDetails(
-                            new NamedType(
+                        new NamedTypeDetails(
                             name: new IdentifierDetails("TValue", new SourceRangeDetails(25, 6)),
                             genericTypeParams: ImmutableList<GenericTypeParameterDetails>.Empty
                         ),
-                            typeConstraint: Optional<NamedType>.Missing
+                        typeConstraint: Optional<NamedTypeDetails>.Missing
                     )),
                 new StringNavigator("")
             );
