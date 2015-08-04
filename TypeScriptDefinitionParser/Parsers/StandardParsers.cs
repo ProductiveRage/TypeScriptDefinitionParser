@@ -14,7 +14,7 @@ namespace TypeScriptDefinitionParser.Parsers
                     throw new ArgumentNullException(nameof(reader));
 
                 if (reader.Current != character)
-                    return Optional<MatchResult<char>>.Missing;
+                    return null;
 
                 return MatchResult.New(character, reader.Next());
             };
@@ -39,7 +39,7 @@ namespace TypeScriptDefinitionParser.Parsers
                     })
                     .Count();
                 if (numberOfMatchedCharacters < value.Length)
-                    return Optional<MatchResult<string>>.Missing;
+                    return null;
 
                 return MatchResult.New(value, reader); // Don't need to progress reader position since the work above moved it to the point after the content that it was trying to match
             };
@@ -49,7 +49,7 @@ namespace TypeScriptDefinitionParser.Parsers
             reader =>
             {
                 if (!PositionIsOverWhitespace(reader))
-                    return Optional<MatchResult<string>>.Missing;
+                    return null;
 
                 var content = new StringBuilder();
                 while (PositionIsOverWhitespace(reader))
