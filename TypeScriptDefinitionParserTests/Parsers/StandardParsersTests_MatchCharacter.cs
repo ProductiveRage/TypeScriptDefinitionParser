@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TypeScriptDefinitionParser;
 using TypeScriptDefinitionParser.ContentReaders;
 using TypeScriptDefinitionParser.Parsers;
+using static TypeScriptDefinitionParserTests.EqualityTesters.Common;
 
 namespace TypeScriptDefinitionParserTests.Parsers
 {
@@ -28,10 +29,12 @@ namespace TypeScriptDefinitionParserTests.Parsers
         [TestMethod]
         public void MatchSuccess()
         {
-            var result = StandardParsers.Match('<')(new StringNavigator("<T>"));
-            Assert.IsTrue(result.IsDefined);
-            Assert.AreEqual('<', result.Value.Result);
-            Assert.AreEqual("T>", result.Value.Reader.ReadRemainingContent());
+            Assert.IsTrue(
+                DoOptionalMatchResultsMatch(
+                    Optional.For(MatchResult.New('<', new StringNavigator("T>"))),
+                    StandardParsers.Match('<')(new StringNavigator("<T>"))
+                )
+            );
         }
 
         [TestMethod]
