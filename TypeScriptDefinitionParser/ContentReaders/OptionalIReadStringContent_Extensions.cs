@@ -16,7 +16,7 @@ namespace TypeScriptDefinitionParser.ContentReaders
 
             var result = parser(reader.Value);
             if (!result.IsDefined)
-                return Optional<IReadStringContent>.Missing;
+                return null;
 
             report(result.Value.Result);
             return Optional.For(result.Value.Reader);

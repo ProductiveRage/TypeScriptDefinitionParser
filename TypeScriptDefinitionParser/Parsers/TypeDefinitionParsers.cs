@@ -69,7 +69,7 @@ namespace TypeScriptDefinitionParser.Parsers
             {
                 if (identifiedInterface)
                     throw new ArgumentException($"Invalid interface content starting at {reader.Index}");
-                return Optional<MatchResult<InterfaceDetails>>.Missing;
+                return null;
             }
             if (genericTypeParameters.IsDefined && !genericTypeParameters.Value.Any())
                 throw new ArgumentException($"Invalid interface content starting at {reader.Index} - has generic type param opening bracket but zero type params present");
@@ -92,7 +92,7 @@ namespace TypeScriptDefinitionParser.Parsers
 
             var readerAtTypeParameterDefinition = reader.StartMatching().Then(Match('<'));
             if (!readerAtTypeParameterDefinition.IsDefined)
-                return Optional<MatchResult<ImmutableList<TypeParameterDetails>>>.Missing;
+                return null;
 
             var genericTypeParameters = ImmutableList<TypeParameterDetails>.Empty;
             while (true)
@@ -135,7 +135,7 @@ namespace TypeScriptDefinitionParser.Parsers
 
             var result = InheritanceChain(reader, supportMultipleBaseTypes: false);
             if (!result.IsDefined)
-                return Optional<MatchResult<IdentifierDetails>>.Missing;
+                return null;
 
             return MatchResult.New(result.Value.Result.Single(), result.Value.Reader);
         }
@@ -149,7 +149,7 @@ namespace TypeScriptDefinitionParser.Parsers
 
             var readerAtTypeList = reader.StartMatching().Then(Match("extends"));
             if (!readerAtTypeList.IsDefined)
-                return Optional<MatchResult<ImmutableList<IdentifierDetails>>>.Missing;
+                return null;
 
             var baseTypes = ImmutableList<IdentifierDetails>.Empty;
             while (true)
@@ -202,7 +202,7 @@ namespace TypeScriptDefinitionParser.Parsers
                 reader = readerAfterValue.Value;
             }
             if (!contents.Any())
-                return Optional<MatchResult<ImmutableList<PropertyDetails>>>.Missing;
+                return null;
             return MatchResult.New(contents, reader);
         }
 
