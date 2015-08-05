@@ -16,7 +16,7 @@ namespace TypeScriptDefinitionParser.Parsers
                 if (reader.Current != character)
                     return null;
 
-                return MatchResult.New(character, reader.Next());
+                return MatchResult.New(character, reader.GetNext());
             };
 
         public static Parser<string> Match(string value)
@@ -34,7 +34,7 @@ namespace TypeScriptDefinitionParser.Parsers
                     {
                         if (reader.Current != c)
                             return false;
-                        reader = reader.Next();
+                        reader = reader.GetNext();
                         return true;
                     })
                     .Count();
@@ -55,7 +55,7 @@ namespace TypeScriptDefinitionParser.Parsers
                 while (PositionIsOverWhitespace(reader))
                 {
                     content.Append(reader.Current.Value);
-                    reader = reader.Next();
+                    reader = reader.GetNext();
                 }
                 return MatchResult.New(content.ToString(), reader); // Don't need to progress reader position since loop above moved beyond the whitespace content
             };

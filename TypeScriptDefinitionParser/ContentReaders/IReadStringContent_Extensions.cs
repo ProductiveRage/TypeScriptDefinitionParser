@@ -58,7 +58,7 @@ namespace TypeScriptDefinitionParser.ContentReaders
                 if (currentCharacter == null)
                     yield break;
 
-                var nextReader = reader.Next();
+                var nextReader = reader.GetNext();
                 yield return new CharacterAndNextReader(currentCharacter.Value, nextReader);
                 reader = nextReader;
             }
