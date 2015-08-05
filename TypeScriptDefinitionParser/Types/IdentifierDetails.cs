@@ -6,11 +6,11 @@ namespace TypeScriptDefinitionParser.Types
 {
     public sealed class IdentifierDetails : IType
     {
-        public static ImmutableHashSet<char> DisallowedCharacters { get; }
+        public static ImmutableList<char> DisallowedCharacters { get; }
             = Enumerable.Range(0, char.MaxValue)
                 .Select(c => (char)c)
                 .Where(c => !char.IsLetterOrDigit(c) && (c != '$') && (c != '_'))
-                .ToImmutableHashSet();
+                .ToImmutableList();
 
         public IdentifierDetails(string value, SourceRangeDetails sourceRange)
         {
