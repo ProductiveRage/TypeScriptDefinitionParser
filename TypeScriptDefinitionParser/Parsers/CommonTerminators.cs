@@ -5,19 +5,18 @@ namespace TypeScriptDefinitionParser.Parsers
 {
     public static class CommonTerminators
     {
-        public static readonly ImmutableHashSet<char> UntilWhiteSpace =
+        public static readonly ImmutableList<char> UntilWhiteSpace =
             Enumerable.Range(0, char.MaxValue)
                 .Select(c => (char)c)
                 .Where(c => char.IsWhiteSpace(c))
-                .ToImmutableHashSet();
+                .ToImmutableList();
 
-        public static readonly ImmutableHashSet<char> UntilPunctuation =
+        public static readonly ImmutableList<char> UntilPunctuation =
             Enumerable.Range(0, char.MaxValue)
                 .Select(c => (char)c)
                 .Where(c => char.IsPunctuation(c))
-                .ToImmutableHashSet();
+                .ToImmutableList();
 
-        public static readonly ImmutableHashSet<char> UntilWhiteSpaceOrPunctuation =
-            UntilWhiteSpace.Union(UntilPunctuation).ToImmutableHashSet();
+        public static readonly ImmutableList<char> UntilWhiteSpaceOrPunctuation = UntilWhiteSpace.AddRange(UntilPunctuation);
     }
 }
