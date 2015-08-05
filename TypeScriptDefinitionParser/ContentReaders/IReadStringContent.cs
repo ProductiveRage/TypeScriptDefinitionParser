@@ -9,6 +9,6 @@
         uint Index { get; }
 
         /// <summary>This will never return null, if all of the content has been read then the returned reference will have a null Current character/// </summary>
-        IReadStringContent Next();
+        IReadStringContent GetNext();
     }
 }

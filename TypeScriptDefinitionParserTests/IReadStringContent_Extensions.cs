@@ -15,7 +15,7 @@ namespace TypeScriptDefinitionParserTests.Parsers
             while (reader.Current != null)
             {
                 content.Append(reader.Current);
-                reader = reader.Next();
+                reader = reader.GetNext();
             }
             return content.ToString();
         }
