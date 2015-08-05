@@ -2,7 +2,10 @@
 
 namespace TypeScriptDefinitionParser
 {
-    // Borrowed from https://github.com/AArnott/ImmutableObjectGraph
+    // Borrowed from https://github.com/AArnott/ImmutableObjectGraph - but tweaked slightly: using C# 6 syntax (such as expression-bodied
+    // members) but also changing the initialisation logic to treat a null value the same as Missing, since I think this is more logical
+    // (I can't see why there should be a way to say that a value is missing AND a way to say that this value is not missing but that it
+    // is null; surely they indicate the same thing).
     [DebuggerDisplay("{IsDefined ? Value.ToString() : \"<missing>\",nq}")]
     public struct Optional<T>
     {
